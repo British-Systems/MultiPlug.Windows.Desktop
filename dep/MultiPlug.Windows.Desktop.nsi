@@ -83,14 +83,14 @@ Section  "" Section1
 	StrCpy $0 "MultiPlug.Windows.Desktop.exe"
 	KillProc::KillProcesses
 	Sleep 2000
-	StrCmp $1 "-1" wooops
+	StrCmp $1 "-1" cantclose
 	
 	
 			  
 	DetailPrint "Installing core files"	
 	File "..\src\MultiPlug.Windows.Desktop\bin\Release\MultiPlug.Windows.Desktop.exe"
 	
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "MultiPlug Windows Desktop" $INSTDIR\MultiPlug\MultiPlug.Windows.Desktop.exe
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "MultiPlug Windows Desktop" "$INSTDIR\MultiPlug.Windows.Desktop.exe"
 	
 		!insertmacro MUI_STARTMENU_WRITE_BEGIN Application  
 		;Create shortcuts
@@ -101,7 +101,7 @@ Section  "" Section1
 	
 	Goto completed
  
-	wooops:
+	cantclose:
 		DetailPrint "Error: Could not close MultiPlug Desktop."
 		Abort
 
@@ -118,13 +118,14 @@ Section "uninstall"
 	StrCpy $0 "MultiPlug.Windows.Desktop.exe"
 	KillProc::KillProcesses
 	Sleep 2000
-	StrCmp $1 "-1" wooops
+	StrCmp $1 "-1" cantclose
 
 	
 	Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall MultiPlug Desktop.lnk"
 	Delete "$SMPROGRAMS\$StartMenuFolder\MultiPlug Desktop.lnk"
 
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MultiPlugWindowsDesktop"
+	DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "MultiPlug Windows Desktop"
 
 	Delete "$INSTDIR\MultiPlug.Windows.Desktop.exe"		
 
@@ -136,7 +137,7 @@ Section "uninstall"
 
 	Goto completed
 
-	wooops:
+	cantclose:
 		DetailPrint "Error: Could not close MultiPlug Desktop."
 		Abort
 
