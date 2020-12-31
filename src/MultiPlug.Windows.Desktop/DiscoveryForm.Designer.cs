@@ -1,4 +1,7 @@
-﻿namespace MultiPlug.Windows.Desktop
+﻿using System;
+using System.Windows.Forms;
+
+namespace MultiPlug.Windows.Desktop
 {
     partial class DiscoveryForm
     {
@@ -39,15 +42,16 @@
             this.MaximizeButton = new System.Windows.Forms.Button();
             this.HideButton = new System.Windows.Forms.Button();
             this.BottomPanel = new System.Windows.Forms.Panel();
+            this.MaintenanceButton = new System.Windows.Forms.Button();
             this.LogoPictureBox = new System.Windows.Forms.PictureBox();
             this.DataGridView = new System.Windows.Forms.DataGridView();
+            this.DevicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.DataGridModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.locationDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ipAddressDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.urlDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pinDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.DevicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.DataGridModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.LayoutPanel.SuspendLayout();
             this.TopPanel.SuspendLayout();
             this.BottomPanel.SuspendLayout();
@@ -132,6 +136,7 @@
             // BottomPanel
             // 
             this.BottomPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.BottomPanel.Controls.Add(this.MaintenanceButton);
             this.BottomPanel.Controls.Add(this.LogoPictureBox);
             this.BottomPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.BottomPanel.Location = new System.Drawing.Point(0, 291);
@@ -139,6 +144,19 @@
             this.BottomPanel.Name = "BottomPanel";
             this.BottomPanel.Size = new System.Drawing.Size(585, 70);
             this.BottomPanel.TabIndex = 3;
+            // 
+            // MaintenanceButton
+            // 
+            this.MaintenanceButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.MaintenanceButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.MaintenanceButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
+            this.MaintenanceButton.Location = new System.Drawing.Point(447, 24);
+            this.MaintenanceButton.Name = "MaintenanceButton";
+            this.MaintenanceButton.Size = new System.Drawing.Size(112, 23);
+            this.MaintenanceButton.TabIndex = 1;
+            this.MaintenanceButton.Text = "SSH Maintenance";
+            this.MaintenanceButton.UseVisualStyleBackColor = false;
+            this.MaintenanceButton.Click += new System.EventHandler(this.MaintenanceButton_Click);
             // 
             // LogoPictureBox
             // 
@@ -191,6 +209,7 @@
             this.DataGridView.GridColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.DataGridView.Location = new System.Drawing.Point(0, 45);
             this.DataGridView.Margin = new System.Windows.Forms.Padding(0);
+            this.DataGridView.MultiSelect = false;
             this.DataGridView.Name = "DataGridView";
             this.DataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -206,49 +225,9 @@
             this.DataGridView.Size = new System.Drawing.Size(585, 246);
             this.DataGridView.TabIndex = 4;
             this.DataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellClick);
+            this.DataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellDoubleClick);
             this.DataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellMouseLeave);
             this.DataGridView.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseMove);
-            // 
-            // nameDataGridViewTextBoxColumn
-            // 
-            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
-            this.nameDataGridViewTextBoxColumn.HeaderText = "Name";
-            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
-            this.nameDataGridViewTextBoxColumn.ReadOnly = true;
-            this.nameDataGridViewTextBoxColumn.Width = 215;
-            // 
-            // locationDataGridViewTextBoxColumn
-            // 
-            this.locationDataGridViewTextBoxColumn.DataPropertyName = "Location";
-            this.locationDataGridViewTextBoxColumn.HeaderText = "Location";
-            this.locationDataGridViewTextBoxColumn.Name = "locationDataGridViewTextBoxColumn";
-            this.locationDataGridViewTextBoxColumn.ReadOnly = true;
-            this.locationDataGridViewTextBoxColumn.Width = 215;
-            // 
-            // ipAddressDataGridViewTextBoxColumn
-            // 
-            this.ipAddressDataGridViewTextBoxColumn.DataPropertyName = "IpAddress";
-            this.ipAddressDataGridViewTextBoxColumn.HeaderText = "Address";
-            this.ipAddressDataGridViewTextBoxColumn.Name = "ipAddressDataGridViewTextBoxColumn";
-            this.ipAddressDataGridViewTextBoxColumn.ReadOnly = true;
-            this.ipAddressDataGridViewTextBoxColumn.Width = 128;
-            // 
-            // urlDataGridViewTextBoxColumn
-            // 
-            this.urlDataGridViewTextBoxColumn.DataPropertyName = "Url";
-            this.urlDataGridViewTextBoxColumn.HeaderText = "Url";
-            this.urlDataGridViewTextBoxColumn.MinimumWidth = 2;
-            this.urlDataGridViewTextBoxColumn.Name = "urlDataGridViewTextBoxColumn";
-            this.urlDataGridViewTextBoxColumn.ReadOnly = true;
-            this.urlDataGridViewTextBoxColumn.Visible = false;
-            this.urlDataGridViewTextBoxColumn.Width = 2;
-            // 
-            // pinDataGridViewCheckBoxColumn
-            // 
-            this.pinDataGridViewCheckBoxColumn.DataPropertyName = "Pin";
-            this.pinDataGridViewCheckBoxColumn.HeaderText = "";
-            this.pinDataGridViewCheckBoxColumn.Name = "pinDataGridViewCheckBoxColumn";
-            this.pinDataGridViewCheckBoxColumn.Width = 27;
             // 
             // DevicesBindingSource
             // 
@@ -258,6 +237,41 @@
             // DataGridModelBindingSource
             // 
             this.DataGridModelBindingSource.DataSource = typeof(MultiPlug.Windows.Desktop.Models.DataGridModel);
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
+            this.nameDataGridViewTextBoxColumn.HeaderText = "Name";
+            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            this.nameDataGridViewTextBoxColumn.Width = 192;
+            // 
+            // locationDataGridViewTextBoxColumn
+            // 
+            this.locationDataGridViewTextBoxColumn.DataPropertyName = "Location";
+            this.locationDataGridViewTextBoxColumn.HeaderText = "Location";
+            this.locationDataGridViewTextBoxColumn.Name = "locationDataGridViewTextBoxColumn";
+            this.locationDataGridViewTextBoxColumn.Width = 192;
+            // 
+            // ipAddressDataGridViewTextBoxColumn
+            // 
+            this.ipAddressDataGridViewTextBoxColumn.DataPropertyName = "IpAddress";
+            this.ipAddressDataGridViewTextBoxColumn.HeaderText = "IP Address";
+            this.ipAddressDataGridViewTextBoxColumn.Name = "ipAddressDataGridViewTextBoxColumn";
+            this.ipAddressDataGridViewTextBoxColumn.Width = 192;
+            // 
+            // urlDataGridViewTextBoxColumn
+            // 
+            this.urlDataGridViewTextBoxColumn.DataPropertyName = "Url";
+            this.urlDataGridViewTextBoxColumn.HeaderText = "Url";
+            this.urlDataGridViewTextBoxColumn.Name = "urlDataGridViewTextBoxColumn";
+            this.urlDataGridViewTextBoxColumn.Visible = false;
+            // 
+            // pinDataGridViewCheckBoxColumn
+            // 
+            this.pinDataGridViewCheckBoxColumn.DataPropertyName = "Pin";
+            this.pinDataGridViewCheckBoxColumn.HeaderText = "Pin";
+            this.pinDataGridViewCheckBoxColumn.Name = "pinDataGridViewCheckBoxColumn";
+            this.pinDataGridViewCheckBoxColumn.Visible = false;
             // 
             // DiscoveryForm
             // 
@@ -299,11 +313,12 @@
         private System.Windows.Forms.PictureBox LogoPictureBox;
         private System.Windows.Forms.BindingSource DevicesBindingSource;
         private System.Windows.Forms.BindingSource DataGridModelBindingSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn locationDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ipAddressDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn urlDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn pinDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.Button MaintenanceButton;
+        private DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn locationDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn ipAddressDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn urlDataGridViewTextBoxColumn;
+        private DataGridViewCheckBoxColumn pinDataGridViewCheckBoxColumn;
     }
 }
 

@@ -80,9 +80,18 @@ namespace MultiPlug.Windows.Desktop
             Application.Exit();
         }
 
+        private static object m_Lock = new object();
+
         private void OnDeviceDiscovered(object sender, DataGridRow e)
         {
-            Invoke((MethodInvoker) delegate { m_DataGridModel.Devices.Add(e); });
+            lock (m_Lock)
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    m_DataGridModel.Devices.Add(e);
+                });
+            }
+
             DataGridView.ClearSelection();
 
             MenuItem MenuItem = new MenuItem();
@@ -98,13 +107,13 @@ namespace MultiPlug.Windows.Desktop
             this.MaximumSize = new Size(this.Size.Width, Screen.PrimaryScreen.WorkingArea.Height);
         }
 
+        private string m_ClickedIP = string.Empty;
+
         private void OnCellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.ColumnIndex != 4)
             {
-                ProcessStartInfo sInfo = new ProcessStartInfo(DataGridView.Rows[e.RowIndex].Cells[3].Value.ToString());
-                Process.Start(sInfo);
-                HideForm();
+                m_ClickedIP = DataGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
             }
         }
 
@@ -114,6 +123,16 @@ namespace MultiPlug.Windows.Desktop
 
             ProcessStartInfo sInfo = new ProcessStartInfo(MenuItem.Tag.ToString());
             Process.Start(sInfo);
+        }
+
+        private void OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex != 4)
+            {
+                ProcessStartInfo sInfo = new ProcessStartInfo(DataGridView.Rows[e.RowIndex].Cells[3].Value.ToString());
+                Process.Start(sInfo);
+                HideForm();
+            }
         }
 
         private void OnCellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
@@ -198,6 +217,12 @@ namespace MultiPlug.Windows.Desktop
         private void DiscoveryForm_Move(object sender, System.EventArgs e)
         {
             MaximizedBounds = new Rectangle( Location.X, 0, Location.X + Width, Screen.PrimaryScreen.WorkingArea.Height);
+        }
+
+        private void MaintenanceButton_Click(object sender, EventArgs e)
+        {
+            var MaintenanceForm = new MaintenanceForm( m_ClickedIP );
+            MaintenanceForm.Show();
         }
     }
 }

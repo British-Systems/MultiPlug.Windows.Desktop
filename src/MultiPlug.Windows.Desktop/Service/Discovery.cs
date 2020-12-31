@@ -29,28 +29,34 @@ namespace MultiPlug.Windows.Desktop.Service
 
         List<string> Found = new List<string>();
 
+        private static object m_Lock = new object();
+
         private void OnNewDiscovery(IEnumerable<BeaconLocation> theBeacons)
         {
-            foreach (var beacon in theBeacons)
+            lock (m_Lock)
             {
-                string IpAdress = beacon.Address.Address.ToString();
 
-                var Search = Found.FirstOrDefault(d => d == beacon.Location);
-
-                if( Search == null )
+                foreach (var beacon in theBeacons)
                 {
-                    Found.Add(beacon.Location);
+                    string IpAdress = beacon.Address.Address.ToString();
 
-                    var LookupWorker = new DiscoveryDescriptionLookup(IpAdress, beacon.Location);
+                    var Search = Found.FirstOrDefault(d => d == beacon.Location);
 
-                    LookupWorker.Resolved += Lookup_Resolved;
-                    LookupWorker.Errored += Lookup_Errored;
+                    if (Search == null)
+                    {
+                        Found.Add(beacon.Location);
 
-                    var Thread = new Thread(LookupWorker.Lookup) { IsBackground = true };
+                        var LookupWorker = new DiscoveryDescriptionLookup(IpAdress, beacon.Location);
 
-                    Thread.Start();
+                        LookupWorker.Resolved += Lookup_Resolved;
+                        LookupWorker.Errored += Lookup_Errored;
+
+                        var Thread = new Thread(LookupWorker.Lookup) { IsBackground = true };
+
+                        Thread.Start();
+                    }
+
                 }
-
             }
         }
 
