@@ -22,55 +22,58 @@ namespace MultiPlug.Windows.Desktop
             IPAddressTextBox.Text = theIPAddress;
         }
 
-        private SshCommand[] SendCommand(params string[] theCommands)
+        private SshCommand[] SendCommand(string[] theCommands, bool WaitForResult = true  )
         {
             SshCommand[] Response = new SshCommand[theCommands.Length];
 
             Task<SshCommand>[] Tasks = new Task<SshCommand>[theCommands.Length];
 
-            using (var client = new SshClient(IPAddressTextBox.Text, UserNameTextBox.Text, PasswordTextBox.Text))
+            var client = new SshClient(IPAddressTextBox.Text, UserNameTextBox.Text, PasswordTextBox.Text);
+
+            try
             {
-                try
-                {
-                    client.Connect();
-                }
-                catch (System.Net.Sockets.SocketException theException)
-                {
-                    AppendTextOutputWindow(theException.Message);
+                client.Connect();
+            }
+            catch (System.Net.Sockets.SocketException theException)
+            {
+                AppendTextOutputWindow(theException.Message);
                     
-                }
-                catch(Renci.SshNet.Common.SshConnectionException theException)
-                {
-                    AppendTextOutputWindow(theException.Message);
-                }
-                catch(Renci.SshNet.Common.SshAuthenticationException theException)
-                {
-                    AppendTextOutputWindow(theException.Message);
-                }
+            }
+            catch(Renci.SshNet.Common.SshConnectionException theException)
+            {
+                AppendTextOutputWindow(theException.Message);
+            }
+            catch(Renci.SshNet.Common.SshAuthenticationException theException)
+            {
+                AppendTextOutputWindow(theException.Message);
+            }
 
-
-                if(client.IsConnected)
+            if(client.IsConnected)
+            {
+                for ( int i = 0; i < theCommands.Length; i++)
                 {
-                    for ( int i = 0; i < theCommands.Length; i++)
+                    int index = i;
+
+                    Tasks[index] = Task.Run(() =>
                     {
-                        int index = i;
 
-                        Tasks[index] = Task.Run(() =>
+                        try
                         {
-
-                            try
-                            {
-                                return client.RunCommand(theCommands[index]);
-                            }
-                            catch( Exception ex)
-                            {
-                                AppendTextOutputWindow(ex.Message);
-                                return null;
-                            }
-                        });
+                            return client.RunCommand(theCommands[index]);
+                        }
+                        catch( Exception ex)
+                        {
+                            AppendTextOutputWindow(ex.Message);
+                            return null;
+                        }
+                    });
+                }
+                if(WaitForResult)
+                {
+                    if( ! Task.WaitAll(Tasks, 5000) )
+                    {
+                        return new SshCommand[0];
                     }
-
-                    Task.WaitAll(Tasks);
 
                     try
                     {
@@ -85,11 +88,23 @@ namespace MultiPlug.Windows.Desktop
                     {
                         Response[i] = Tasks[i].Result;
                     }
+
+                    client.Dispose();
                 }
                 else
                 {
+                    Task.Delay(3000).ContinueWith(T =>
+                    {
+                        client.Dispose();
+                    });
+
                     return new SshCommand[0];
                 }
+
+            }
+            else
+            {
+                return new SshCommand[0];
             }
 
             return Response;
@@ -110,7 +125,7 @@ namespace MultiPlug.Windows.Desktop
 
         private void ConnectButton_Click(object sender, EventArgs e)
         {
-            var Response = SendCommand("systemctl is-enabled multiplug", "systemctl is-active multiplug");
+            var Response = SendCommand(new string[] { "systemctl is-enabled multiplug", "systemctl is-active multiplug" });
 
             if (Response.Any())
             {
@@ -186,12 +201,12 @@ namespace MultiPlug.Windows.Desktop
         {
             if (StartOnBoot)
             {
-                SendCommand("sudo systemctl disable multiplug");
+                SendCommand(new string[] { "sudo systemctl disable multiplug" });
 
             }
             else
             {
-                SendCommand("sudo systemctl enable multiplug");
+                SendCommand(new string[] { "sudo systemctl enable multiplug" });
             }
 
             SetStartOnBootButton( ! StartOnBoot );
@@ -201,12 +216,12 @@ namespace MultiPlug.Windows.Desktop
         {
             if (StartStop)
             {
-                SendCommand("sudo systemctl stop multiplug");
+                SendCommand(new string[] { "sudo systemctl stop multiplug" });
 
             }
             else
             {
-                SendCommand("sudo systemctl start multiplug");
+                SendCommand(new string[] { "sudo systemctl start multiplug" });
             }
 
             SetStartStopButton( ! StartStop);
@@ -214,17 +229,15 @@ namespace MultiPlug.Windows.Desktop
 
         private void RebootButton_Click(object sender, EventArgs e)
         {
-            SendCommand("sudo reboot");
+            AppendTextOutputWindow("Reboot command sent");
+            SendCommand(new string[] { "sudo reboot" }, false);
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-
-        }
 
         private void ShutdownButton_Click(object sender, EventArgs e)
         {
-            SendCommand("sudo halt");
+            AppendTextOutputWindow("Shutdown command sent");
+            SendCommand(new string[] { "sudo halt" }, false);
         }
     }
 }
