@@ -45,13 +45,13 @@ namespace MultiPlug.Windows.Desktop
             this.MaintenanceButton = new System.Windows.Forms.Button();
             this.LogoPictureBox = new System.Windows.Forms.PictureBox();
             this.DataGridView = new System.Windows.Forms.DataGridView();
-            this.DevicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.DataGridModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.locationDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ipAddressDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.urlDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pinDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.DevicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.DataGridModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.LayoutPanel.SuspendLayout();
             this.TopPanel.SuspendLayout();
             this.BottomPanel.SuspendLayout();
@@ -154,7 +154,7 @@ namespace MultiPlug.Windows.Desktop
             this.MaintenanceButton.Name = "MaintenanceButton";
             this.MaintenanceButton.Size = new System.Drawing.Size(112, 23);
             this.MaintenanceButton.TabIndex = 1;
-            this.MaintenanceButton.Text = "SSH Maintenance";
+            this.MaintenanceButton.Text = "Maintenance";
             this.MaintenanceButton.UseVisualStyleBackColor = false;
             this.MaintenanceButton.Click += new System.EventHandler(this.MaintenanceButton_Click);
             // 
@@ -229,15 +229,6 @@ namespace MultiPlug.Windows.Desktop
             this.DataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellMouseLeave);
             this.DataGridView.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseMove);
             // 
-            // DevicesBindingSource
-            // 
-            this.DevicesBindingSource.DataMember = "Devices";
-            this.DevicesBindingSource.DataSource = this.DataGridModelBindingSource;
-            // 
-            // DataGridModelBindingSource
-            // 
-            this.DataGridModelBindingSource.DataSource = typeof(MultiPlug.Windows.Desktop.Models.DataGridModel);
-            // 
             // nameDataGridViewTextBoxColumn
             // 
             this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
@@ -272,6 +263,15 @@ namespace MultiPlug.Windows.Desktop
             this.pinDataGridViewCheckBoxColumn.HeaderText = "Pin";
             this.pinDataGridViewCheckBoxColumn.Name = "pinDataGridViewCheckBoxColumn";
             this.pinDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // DevicesBindingSource
+            // 
+            this.DevicesBindingSource.DataMember = "Devices";
+            this.DevicesBindingSource.DataSource = this.DataGridModelBindingSource;
+            // 
+            // DataGridModelBindingSource
+            // 
+            this.DataGridModelBindingSource.DataSource = typeof(MultiPlug.Windows.Desktop.Models.DataGridModel);
             // 
             // DiscoveryForm
             // 

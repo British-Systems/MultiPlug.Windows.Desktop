@@ -41,10 +41,13 @@
             this.StartOnBootButton = new System.Windows.Forms.Button();
             this.RebootButton = new System.Windows.Forms.Button();
             this.ShutdownButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.UploadButton = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.FileLocationTextBox = new System.Windows.Forms.TextBox();
+            this.BrowseButton = new System.Windows.Forms.Button();
+            this.FileLocationLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // IPAddressTextBox
@@ -72,7 +75,7 @@
             this.ConnectButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
             this.ConnectButton.Location = new System.Drawing.Point(339, 16);
             this.ConnectButton.Name = "ConnectButton";
-            this.ConnectButton.Size = new System.Drawing.Size(103, 72);
+            this.ConnectButton.Size = new System.Drawing.Size(103, 57);
             this.ConnectButton.TabIndex = 2;
             this.ConnectButton.Text = "Connect";
             this.ConnectButton.UseVisualStyleBackColor = false;
@@ -120,7 +123,7 @@
             this.OutputWindow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.OutputWindow.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.OutputWindow.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.OutputWindow.Location = new System.Drawing.Point(12, 209);
+            this.OutputWindow.Location = new System.Drawing.Point(12, 236);
             this.OutputWindow.Multiline = true;
             this.OutputWindow.Name = "OutputWindow";
             this.OutputWindow.Size = new System.Drawing.Size(430, 129);
@@ -132,7 +135,7 @@
             this.StartStopButton.Enabled = false;
             this.StartStopButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.StartStopButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.StartStopButton.Location = new System.Drawing.Point(15, 94);
+            this.StartStopButton.Location = new System.Drawing.Point(15, 121);
             this.StartStopButton.Name = "StartStopButton";
             this.StartStopButton.Size = new System.Drawing.Size(103, 51);
             this.StartStopButton.TabIndex = 9;
@@ -145,7 +148,7 @@
             this.StartOnBootButton.Enabled = false;
             this.StartOnBootButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.StartOnBootButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.StartOnBootButton.Location = new System.Drawing.Point(121, 94);
+            this.StartOnBootButton.Location = new System.Drawing.Point(121, 121);
             this.StartOnBootButton.Name = "StartOnBootButton";
             this.StartOnBootButton.Size = new System.Drawing.Size(103, 51);
             this.StartOnBootButton.TabIndex = 10;
@@ -158,7 +161,7 @@
             this.RebootButton.Enabled = false;
             this.RebootButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.RebootButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.RebootButton.Location = new System.Drawing.Point(230, 94);
+            this.RebootButton.Location = new System.Drawing.Point(230, 121);
             this.RebootButton.Name = "RebootButton";
             this.RebootButton.Size = new System.Drawing.Size(103, 51);
             this.RebootButton.TabIndex = 11;
@@ -171,24 +174,25 @@
             this.ShutdownButton.Enabled = false;
             this.ShutdownButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ShutdownButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.ShutdownButton.Location = new System.Drawing.Point(339, 94);
+            this.ShutdownButton.Location = new System.Drawing.Point(339, 121);
             this.ShutdownButton.Name = "ShutdownButton";
             this.ShutdownButton.Size = new System.Drawing.Size(103, 51);
             this.ShutdownButton.TabIndex = 12;
             this.ShutdownButton.UseVisualStyleBackColor = false;
             this.ShutdownButton.Click += new System.EventHandler(this.ShutdownButton_Click);
             // 
-            // button1
+            // UploadButton
             // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.button1.Enabled = false;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.button1.Location = new System.Drawing.Point(15, 151);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(103, 52);
-            this.button1.TabIndex = 13;
-            this.button1.UseVisualStyleBackColor = false;
+            this.UploadButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.UploadButton.Enabled = false;
+            this.UploadButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UploadButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
+            this.UploadButton.Location = new System.Drawing.Point(15, 178);
+            this.UploadButton.Name = "UploadButton";
+            this.UploadButton.Size = new System.Drawing.Size(103, 52);
+            this.UploadButton.TabIndex = 13;
+            this.UploadButton.UseVisualStyleBackColor = false;
+            this.UploadButton.Click += new System.EventHandler(this.UploadButton_Click);
             // 
             // button2
             // 
@@ -196,7 +200,7 @@
             this.button2.Enabled = false;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.button2.Location = new System.Drawing.Point(121, 152);
+            this.button2.Location = new System.Drawing.Point(121, 179);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 51);
             this.button2.TabIndex = 14;
@@ -208,7 +212,7 @@
             this.button3.Enabled = false;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.button3.Location = new System.Drawing.Point(230, 151);
+            this.button3.Location = new System.Drawing.Point(230, 178);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(103, 52);
             this.button3.TabIndex = 15;
@@ -220,22 +224,55 @@
             this.button4.Enabled = false;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
-            this.button4.Location = new System.Drawing.Point(339, 151);
+            this.button4.Location = new System.Drawing.Point(339, 178);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 52);
             this.button4.TabIndex = 16;
             this.button4.UseVisualStyleBackColor = false;
+            // 
+            // FileLocationTextBox
+            // 
+            this.FileLocationTextBox.Location = new System.Drawing.Point(121, 94);
+            this.FileLocationTextBox.Name = "FileLocationTextBox";
+            this.FileLocationTextBox.Size = new System.Drawing.Size(212, 20);
+            this.FileLocationTextBox.TabIndex = 17;
+            // 
+            // BrowseButton
+            // 
+            this.BrowseButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.BrowseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BrowseButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
+            this.BrowseButton.Location = new System.Drawing.Point(339, 79);
+            this.BrowseButton.Name = "BrowseButton";
+            this.BrowseButton.Size = new System.Drawing.Size(102, 35);
+            this.BrowseButton.TabIndex = 18;
+            this.BrowseButton.Text = "Browse";
+            this.BrowseButton.UseVisualStyleBackColor = false;
+            this.BrowseButton.Click += new System.EventHandler(this.BrowseButton_Click);
+            // 
+            // FileLocationLabel
+            // 
+            this.FileLocationLabel.AutoSize = true;
+            this.FileLocationLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(179)))), ((int)(((byte)(179)))), ((int)(((byte)(179)))));
+            this.FileLocationLabel.Location = new System.Drawing.Point(10, 94);
+            this.FileLocationLabel.Name = "FileLocationLabel";
+            this.FileLocationLabel.Size = new System.Drawing.Size(61, 13);
+            this.FileLocationLabel.TabIndex = 19;
+            this.FileLocationLabel.Text = "Update File";
             // 
             // MaintenanceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
-            this.ClientSize = new System.Drawing.Size(454, 348);
+            this.ClientSize = new System.Drawing.Size(454, 379);
+            this.Controls.Add(this.FileLocationLabel);
+            this.Controls.Add(this.BrowseButton);
+            this.Controls.Add(this.FileLocationTextBox);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.UploadButton);
             this.Controls.Add(this.ShutdownButton);
             this.Controls.Add(this.RebootButton);
             this.Controls.Add(this.StartOnBootButton);
@@ -252,7 +289,7 @@
             this.MaximizeBox = false;
             this.Name = "MaintenanceForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SSH Maintenance";
+            this.Text = "Maintenance";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -272,9 +309,12 @@
         private System.Windows.Forms.Button StartOnBootButton;
         private System.Windows.Forms.Button RebootButton;
         private System.Windows.Forms.Button ShutdownButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button UploadButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox FileLocationTextBox;
+        private System.Windows.Forms.Button BrowseButton;
+        private System.Windows.Forms.Label FileLocationLabel;
     }
 }
