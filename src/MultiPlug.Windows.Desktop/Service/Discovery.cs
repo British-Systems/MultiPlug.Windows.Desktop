@@ -25,6 +25,7 @@ namespace MultiPlug.Windows.Desktop.Service
         public void Stop()
         {
             m_Probe.Stop();
+            Found.Clear();
         }
 
         List<string> Found = new List<string>();

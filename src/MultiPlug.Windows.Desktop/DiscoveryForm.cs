@@ -25,11 +25,19 @@ namespace MultiPlug.Windows.Desktop
 
         private bool m_HiddenOnStartup = true;
 
-        private MenuItem DiscoveredMenuItem;
+        private MenuItem m_DiscoveredMenuItem;
+
+        private bool WindowStateMaximized = false;
+        private int WindowStateNormalHeight;
+        private Point WindowStateNormalLocation;
+
+        private System.Timers.Timer m_RefreshTimer = new System.Timers.Timer();
 
         public DiscoveryForm()
         {
             InitializeComponent();
+
+            WindowStateNormalHeight = Height;
 
             m_TrayMenu = new ContextMenu();
 
@@ -39,15 +47,15 @@ namespace MultiPlug.Windows.Desktop
             MenuItem.Click += ShowButton_Click;
             m_TrayMenu.MenuItems.Add(MenuItem);
 
-            DiscoveredMenuItem = new MenuItem();
-            DiscoveredMenuItem.Break = false;
-            DiscoveredMenuItem.Text = "Discovered";
-            m_TrayMenu.MenuItems.Add(DiscoveredMenuItem);
+            m_DiscoveredMenuItem = new MenuItem();
+            m_DiscoveredMenuItem.Break = false;
+            m_DiscoveredMenuItem.Text = "Discovered";
+            m_TrayMenu.MenuItems.Add(m_DiscoveredMenuItem);
 
             m_TrayMenu.MenuItems.Add("Exit", OnExit);
 
             m_TrayIcon = new NotifyIcon();
-            m_TrayIcon.Click += ShowButton_Click;
+            m_TrayIcon.MouseClick += ShowButton_MouseClick;
             m_TrayIcon.Text = "MultiPlug Desktop";
             m_TrayIcon.Icon = Resources.multiplug;
             m_TrayIcon.ContextMenu = m_TrayMenu;
@@ -59,6 +67,27 @@ namespace MultiPlug.Windows.Desktop
             m_DiscoveryService.Resolved += OnDeviceDiscovered;
 
             Load += Form_Load;
+
+            m_RefreshTimer.Elapsed += OnRefreshTimerElapsed;
+
+            m_RefreshTimer.Interval = 25000;    // Refresh Every 25 Seconds.
+        }
+
+        private void OnRefreshTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            m_DiscoveryService.Stop();
+
+            BeginInvoke((MethodInvoker)delegate
+            {
+                m_DataGridModel.Devices.Clear();
+            });
+
+            BeginInvoke((MethodInvoker)delegate
+            {
+                m_DiscoveredMenuItem.MenuItems.Clear();
+            });
+
+            m_DiscoveryService.Start();
         }
 
         protected override void SetVisibleCore(bool value)
@@ -80,17 +109,12 @@ namespace MultiPlug.Windows.Desktop
             Application.Exit();
         }
 
-        private static object m_Lock = new object();
-
         private void OnDeviceDiscovered(object sender, DataGridRow e)
         {
-            lock (m_Lock)
+            BeginInvoke((MethodInvoker)delegate
             {
-                Invoke((MethodInvoker)delegate
-                {
-                    m_DataGridModel.Devices.Add(e);
-                });
-            }
+                m_DataGridModel.Devices.Add(e);
+            });
 
             DataGridView.ClearSelection();
 
@@ -99,7 +123,8 @@ namespace MultiPlug.Windows.Desktop
             MenuItem.Text = e.Name;
             MenuItem.Tag = e.Url;
             MenuItem.Click += OnDiscoveredMenuItem_Click;
-            DiscoveredMenuItem.MenuItems.Add(MenuItem);
+            MenuItem.Enabled = true;
+            m_DiscoveredMenuItem.MenuItems.Add(MenuItem);
         }
 
         private void Form_Load(object sender, EventArgs e)
@@ -153,8 +178,33 @@ namespace MultiPlug.Windows.Desktop
 
         private void MaximizeButton_Click(object sender, EventArgs e)
         {
-            this.WindowState = (this.WindowState == FormWindowState.Maximized) ? FormWindowState.Normal : FormWindowState.Maximized;
-            SetMaximizeButtonImage();
+            if (WindowStateMaximized)
+            {
+                WindowStateMaximized = false;
+                SetMaximizeButtonImage();
+
+                // If the form hasn't been moved from the X cord, put it 
+                // back to where it was, if it has, just change the height and leave it where it is
+                if(WindowStateNormalLocation.X == this.Location.X)
+                {
+                    this.Location = WindowStateNormalLocation;
+                }
+
+                this.Height = WindowStateNormalHeight;
+            }
+            else
+            {
+                WindowStateMaximized = true;
+                SetMaximizeButtonImage();
+
+                Screen Screen = Screen.FromControl(this);
+
+                this.Height = Screen.WorkingArea.Height;
+
+                WindowStateNormalLocation = this.Location;
+                this.Location = new Point(Location.X, 0);
+            }
+
         }
 
         private void OnResized(object sender, EventArgs e)
@@ -164,7 +214,7 @@ namespace MultiPlug.Windows.Desktop
 
         private void SetMaximizeButtonImage()
         {
-            MaximizeButton.Image = (this.WindowState == FormWindowState.Maximized) ? Resources.minimize : Resources.maximize;
+            MaximizeButton.Image = (WindowStateMaximized) ? Resources.minimize : Resources.maximize;
         }
 
         private void HideButton_Click(object sender, EventArgs e)
@@ -174,6 +224,7 @@ namespace MultiPlug.Windows.Desktop
 
         private void HideForm()
         {
+            m_RefreshTimer.Stop();
             ShowInTaskbar = false;
             Hide();
 
@@ -198,11 +249,34 @@ namespace MultiPlug.Windows.Desktop
             m_DiscoveryService.Stop();
         }
 
-        private void ShowButton_Click(object sender, EventArgs e)
+        private void ShowButton_MouseClick(object sender, MouseEventArgs theEventArgs)
+        {
+            // Hack to fix double firing of ShowButton_Click by the NotifyIcon (m_TrayIcon) Click Event
+            // https://stackoverflow.com/questions/45336951/clicking-a-contextmenuitem-in-a-notifyicon-context-menu-calls-the-notifyicon-cli
+            if (((MouseEventArgs)theEventArgs).Button != MouseButtons.Left)
+            {
+                return;
+            }
+
+            ShowButton_Click(sender, theEventArgs);
+        }
+
+        private void ShowButton_Click(object sender, EventArgs theEventArgs)
         {
             Show();
+            BeginInvoke((MethodInvoker)delegate
+            {
+                m_DiscoveredMenuItem.MenuItems.Clear();
+            });
+
+            BeginInvoke((MethodInvoker)delegate
+            {
+                m_DataGridModel.Devices.Clear();
+            });
+
             ShowInTaskbar = true;
             m_DiscoveryService.Start();
+            m_RefreshTimer.Start();
         }
 
         private void TopPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
