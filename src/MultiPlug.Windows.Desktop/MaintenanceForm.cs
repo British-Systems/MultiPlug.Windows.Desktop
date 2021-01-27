@@ -251,11 +251,12 @@ namespace MultiPlug.Windows.Desktop
                 return;
             }
 
-
+            AppendTextOutputWindow("Extracting files...");
             var ExtractDirectory = Desktop.Update.Package.Extract(FileLocationTextBox.Text);
 
             if( ExtractDirectory == string.Empty)
             {
+                AppendTextOutputWindow("Extract Failed.");
                 return;
             }
 

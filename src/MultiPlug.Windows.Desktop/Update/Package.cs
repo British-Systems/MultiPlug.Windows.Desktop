@@ -11,23 +11,32 @@ namespace MultiPlug.Windows.Desktop.Update
     {
         internal static string Extract(string theStartDir)
         {
-            string theExtractDirectory = "temp";
-
-
             string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(theStartDir);
 
-            string RootDirectory = Path.Combine(theExtractDirectory, FileNameWithoutExtension);
+            string RootDirectory = Path.Combine(Path.GetTempPath(), FileNameWithoutExtension);
 
-            if (Directory.Exists(theExtractDirectory))
+            if (Directory.Exists(RootDirectory))
             {
                 try
                 {
-                    Directory.Delete(theExtractDirectory, true);
+                    Directory.Delete(RootDirectory, true);
                 }
                 catch (IOException)
                 {
                 }
             }
+
+            if (!Directory.Exists(RootDirectory))
+            {
+                try
+                {
+                    Directory.CreateDirectory(RootDirectory);
+                }
+                catch (IOException)
+                {
+                }
+            }
+
             try
             {
                 ZipFile.ExtractToDirectory(theStartDir, RootDirectory);
