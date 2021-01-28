@@ -25,7 +25,10 @@ namespace MultiPlug.Windows.Desktop.Service
         public void Stop()
         {
             m_Probe.Stop();
-            Found.Clear();
+            lock (m_Lock)
+            {
+                Found.Clear();
+            }
         }
 
         List<string> Found = new List<string>();
@@ -47,7 +50,7 @@ namespace MultiPlug.Windows.Desktop.Service
                     {
                         Found.Add(beacon.Location);
 
-                        var LookupWorker = new DiscoveryDescriptionLookup(IpAdress, beacon.Location);
+                        var LookupWorker = new DiscoveryDescriptionLookup(beacon.Address, beacon.Location);
 
                         LookupWorker.Resolved += Lookup_Resolved;
                         LookupWorker.Errored += Lookup_Errored;
@@ -63,7 +66,10 @@ namespace MultiPlug.Windows.Desktop.Service
 
         private void Lookup_Errored(object sender, string theUrl)
         {
-            Found.Remove(theUrl);
+            lock (m_Lock)
+            {
+                Found.Remove(theUrl);
+            }
         }
 
         private void Lookup_Resolved(object sender, DataGridRow theNewDeviceRow)

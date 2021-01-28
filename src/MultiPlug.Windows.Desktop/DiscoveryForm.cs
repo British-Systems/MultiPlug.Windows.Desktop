@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MultiPlug.Windows.Desktop.Models;
 using MultiPlug.Windows.Desktop.Properties;
+using System.Net;
 
 namespace MultiPlug.Windows.Desktop
 {
@@ -295,7 +296,9 @@ namespace MultiPlug.Windows.Desktop
 
         private void MaintenanceButton_Click(object sender, EventArgs e)
         {
-            var MaintenanceForm = new MaintenanceForm( m_ClickedIP );
+            string[] IPAddress = m_ClickedIP.Split(':');
+
+            var MaintenanceForm = new MaintenanceForm(IPAddress[0]);
             MaintenanceForm.Show();
         }
     }

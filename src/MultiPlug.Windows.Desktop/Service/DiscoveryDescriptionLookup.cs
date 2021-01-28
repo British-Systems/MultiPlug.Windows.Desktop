@@ -10,13 +10,13 @@ namespace MultiPlug.Windows.Desktop.Service
     public class DiscoveryDescriptionLookup
     {
         readonly string m_Url;
-        readonly string m_IpAddress;
+        readonly IPEndPoint m_IpAddress;
 
 
         public event EventHandler<DataGridRow> Resolved;
         public event EventHandler<string> Errored;
 
-        public DiscoveryDescriptionLookup(string theIpAddress, string theUrl)
+        public DiscoveryDescriptionLookup(IPEndPoint theIpAddress, string theUrl)
         {
             m_Url = theUrl;
             m_IpAddress = theIpAddress;
@@ -37,7 +37,9 @@ namespace MultiPlug.Windows.Desktop.Service
                     {
                         EnvironmentModel Model = (EnvironmentModel)serializer.Deserialize(jsonTextReader, typeof(EnvironmentModel));
 
-                        Resolved?.Invoke(this, new DataGridRow() { Name = Model.machineName, Url = "http://"+ m_IpAddress + "/", IpAddress = m_IpAddress, Location = Model.location });
+                        string IPWithPort = m_IpAddress.Address + ((m_IpAddress.Port != 80) ? ":" + m_IpAddress.Port : "");
+
+                        Resolved?.Invoke(this, new DataGridRow() { Name = Model.machineName, Url = "http://"+ IPWithPort + "/", IpAddress = IPWithPort, Location = Model.location });
                     }
                 }
             }
@@ -81,7 +83,7 @@ namespace MultiPlug.Windows.Desktop.Service
                         return;
                     }
 
-                    Resolved?.Invoke(this, new DataGridRow() { Name = deserialized.Device.FriendlyName, Url = deserialized.Device.PresentationURL, IpAddress = m_IpAddress, Location = "Unknown" });
+                    Resolved?.Invoke(this, new DataGridRow() { Name = deserialized.Device.FriendlyName, Url = deserialized.Device.PresentationURL, IpAddress = m_IpAddress.Address.ToString(), Location = "Unknown" });
 
                 }
             }
