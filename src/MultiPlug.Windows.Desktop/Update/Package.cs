@@ -13,7 +13,7 @@ namespace MultiPlug.Windows.Desktop.Update
         {
             string FileNameWithoutExtension = Path.GetFileNameWithoutExtension(theStartDir);
 
-            string RootDirectory = Path.Combine(Path.GetTempPath(), FileNameWithoutExtension);
+            string RootDirectory = Path.Combine(Path.GetTempPath(), "multiplug", FileNameWithoutExtension);
 
             if (Directory.Exists(RootDirectory))
             {

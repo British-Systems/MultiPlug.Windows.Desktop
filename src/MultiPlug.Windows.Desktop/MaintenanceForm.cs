@@ -1,27 +1,27 @@
-﻿using Renci.SshNet;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Renci.SshNet;
 
 namespace MultiPlug.Windows.Desktop
 {
     public partial class MaintenanceForm : Form
     {
-
-
         public MaintenanceForm( string theIPAddress)
         {
+            this.Shown += MaintenanceForm_Shown;
+
             InitializeComponent();
 
             IPAddressTextBox.Text = theIPAddress;
+        }
+
+        private void MaintenanceForm_Shown(object sender, EventArgs e)
+        {
+            RefreshButton_Click(null, null);
         }
 
         private SshCommand[] SendCommand(string[] theCommands, bool WaitForResult = true  )
@@ -112,17 +112,12 @@ namespace MultiPlug.Windows.Desktop
             return Response;
         }
 
-        private static object m_Lock = new object();
-
         private void AppendTextOutputWindow( string theOutput )
         {
-            lock (m_Lock)
+            BeginInvoke((MethodInvoker)delegate
             {
-                Invoke((MethodInvoker)delegate
-                {
-                    OutputWindow.AppendText(theOutput + Environment.NewLine);
-                });
-            }        
+                OutputWindow.AppendText(theOutput + Environment.NewLine);
+            });
         }
 
         private void ConnectButton_Click(object sender, EventArgs e)
@@ -260,12 +255,17 @@ namespace MultiPlug.Windows.Desktop
                 return;
             }
 
+            AppendTextOutputWindow("Extract Complete.");
+
             string PackageName = Desktop.Update.Package.GetPackageName(ExtractDirectory);
 
             if( PackageName == string.Empty)
             {
+                AppendTextOutputWindow("Couldn't get Package Name");
                 return;
             }
+
+            AppendTextOutputWindow("Package Name: " + PackageName);
 
             bool isCore = false;
 
@@ -336,9 +336,6 @@ namespace MultiPlug.Windows.Desktop
             }
         }
 
-
-
-
         private void BrowseButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog
@@ -353,14 +350,200 @@ namespace MultiPlug.Windows.Desktop
                 Filter = "Nupkg files (*.nupkg)|*.nupkg",
                 FilterIndex = 2,
                 RestoreDirectory = true,
-
-            //    ReadOnlyChecked = true,
-           //     ShowReadOnly = true
             };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 FileLocationTextBox.Text = openFileDialog1.FileName;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void NugetDownloadButton_Click(object sender, EventArgs e)
+        {
+            const string FileName = "multiplug.core.nupkg";
+
+            var FullPath = Path.Combine(Path.GetTempPath(), "multiplug");
+
+            if (!Directory.Exists(FullPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(FullPath);
+                }
+                catch (IOException)
+                {
+                    AppendTextOutputWindow("Failed to create temp folder: " + FullPath);
+                    return;
+                }
+            }
+
+            var FullPathWithFileName = Path.Combine(FullPath, FileName);
+
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            var client = new WebClient();
+
+            AppendTextOutputWindow("Downloading MultiPlug.Core.nupkg");
+
+            var task = client.DownloadFileTaskAsync("https://www.nuget.org/api/v2/package/MultiPlug.Core/", FullPathWithFileName).ContinueWith(T =>
+           {
+               if (T.IsFaulted)
+               {
+                   AppendTextOutputWindow("Download Failed");
+               }
+               else
+               {
+                   BeginInvoke((MethodInvoker)delegate
+                   {
+                       FileLocationTextBox.Text = FullPathWithFileName;
+                   });
+
+                   AppendTextOutputWindow("Download Complete");
+               }
+
+               client.Dispose();
+           });
+        }
+
+        private void RefreshButton_Click(object sender, EventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate
+            {
+                DriveComboBox.Items.Clear();
+            });
+
+            bool Any = false;
+            foreach( var Drive in DriveInfo.GetDrives())
+            {
+                string VolumeLabel = string.Empty;
+                try
+                {
+                    VolumeLabel = Drive.VolumeLabel;
+                }
+                catch(IOException)
+                {
+                    continue;
+                }
+
+                if (VolumeLabel == "boot")
+                {
+                    Any = true;
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        DriveComboBox.Items.Add(Drive.Name);
+                    });
+                }
+            }
+
+            if( Any)
+            {
+                SaveButton.Enabled = true;
+
+                BeginInvoke((MethodInvoker)delegate
+                {
+                    DriveComboBox.SelectedIndex = 0;
+                });
+            }
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            if(DriveComboBox.Items.Count == 0)
+            {
+                AppendTextOutputWindow("No drive selected");
+                return;
+            }
+
+            if (FileLocationTextBox.Text == string.Empty)
+            {
+                AppendTextOutputWindow("No update file path");
+                return;
+            }
+
+            AppendTextOutputWindow("Extracting files...");
+            var ExtractDirectory = Desktop.Update.Package.Extract(FileLocationTextBox.Text);
+
+            if (ExtractDirectory == string.Empty)
+            {
+                AppendTextOutputWindow("Extract Failed.");
+                return;
+            }
+
+            AppendTextOutputWindow("Extract Complete.");
+
+            string PackageName = Desktop.Update.Package.GetPackageName(ExtractDirectory);
+
+            if (PackageName == string.Empty)
+            {
+                AppendTextOutputWindow("Couldn't get Package Name");
+                return;
+            }
+
+            AppendTextOutputWindow("Package Name: " + PackageName);
+
+            string HomeDirectory = Desktop.Update.Package.GetHomeDirectory(ExtractDirectory);
+
+
+            string BootDrivePath = Path.Combine((string)DriveComboBox.SelectedItem, "multiplug", "updates", PackageName);
+
+            if (Directory.Exists(BootDrivePath))
+            {
+                try
+                {
+                    Directory.Delete(BootDrivePath, true);
+                }
+                catch(Exception)
+                {
+                    AppendTextOutputWindow("Filed to delete the updates folder. Try deleting it manually. Path: " + BootDrivePath);
+                    return;
+                }
+            }
+
+            AppendTextOutputWindow("Begin Copying to drive.");
+
+            CopyFolder(HomeDirectory, BootDrivePath);
+
+            AppendTextOutputWindow("Copy complete");
+
+            try
+            {
+                Directory.Delete(ExtractDirectory, true);
+            }
+            catch
+            { }
+
+        }
+
+        public void CopyFolder(string sourceFolder, string destFolder)
+        {
+            try
+            {
+                if (!Directory.Exists(destFolder))
+                    Directory.CreateDirectory(destFolder);
+                string[] files = Directory.GetFiles(sourceFolder);
+                foreach (string file in files)
+                {
+                    string name = Path.GetFileName(file);
+                    string dest = Path.Combine(destFolder, name);
+                    File.Copy(file, dest, true);
+                }
+                string[] folders = Directory.GetDirectories(sourceFolder);
+                foreach (string folder in folders)
+                {
+                    string name = Path.GetFileName(folder);
+                    string dest = Path.Combine(destFolder, name);
+                    CopyFolder(folder, dest);
+                }
+            }
+            catch (Exception)
+            {
+                AppendTextOutputWindow("Failed. Copy Exception");
             }
         }
     }
