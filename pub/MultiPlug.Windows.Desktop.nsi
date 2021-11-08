@@ -12,7 +12,7 @@
 	Name "${INSTALLNAME}"
 
 	; The file to write
-	OutFile "..\bin\DesktopSetup.exe"
+	OutFile "DesktopSetup.exe"
 
 	; The default installation directory
 	InstallDir "$PROGRAMFILES\MultiPlug\Desktop"
