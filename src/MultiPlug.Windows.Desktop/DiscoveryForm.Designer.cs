@@ -45,12 +45,12 @@ namespace MultiPlug.Windows.Desktop
             this.MaintenanceButton = new System.Windows.Forms.Button();
             this.LogoPictureBox = new System.Windows.Forms.PictureBox();
             this.DataGridView = new System.Windows.Forms.DataGridView();
-            this.DevicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.locationDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ipAddressDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.urlDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pinDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.DevicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.DataGridModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.LayoutPanel.SuspendLayout();
             this.TopPanel.SuspendLayout();
@@ -221,6 +221,7 @@ namespace MultiPlug.Windows.Desktop
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.DataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.DataGridView.RowHeadersVisible = false;
+            this.DataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.DataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DataGridView.Size = new System.Drawing.Size(585, 246);
             this.DataGridView.TabIndex = 4;
@@ -228,11 +229,6 @@ namespace MultiPlug.Windows.Desktop
             this.DataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellDoubleClick);
             this.DataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnCellMouseLeave);
             this.DataGridView.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.OnCellMouseMove);
-            // 
-            // DevicesBindingSource
-            // 
-            this.DevicesBindingSource.DataMember = "Devices";
-            this.DevicesBindingSource.DataSource = this.DataGridModelBindingSource;
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -268,6 +264,11 @@ namespace MultiPlug.Windows.Desktop
             this.pinDataGridViewCheckBoxColumn.HeaderText = "Pin";
             this.pinDataGridViewCheckBoxColumn.Name = "pinDataGridViewCheckBoxColumn";
             this.pinDataGridViewCheckBoxColumn.Visible = false;
+            // 
+            // DevicesBindingSource
+            // 
+            this.DevicesBindingSource.DataMember = "Devices";
+            this.DevicesBindingSource.DataSource = this.DataGridModelBindingSource;
             // 
             // DataGridModelBindingSource
             // 

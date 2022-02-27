@@ -4,14 +4,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using MultiPlug.Windows.Desktop.Models;
 using MultiPlug.Windows.Desktop.Properties;
-using System.Net;
+using MultiPlug.Windows.Desktop.Update;
 
 namespace MultiPlug.Windows.Desktop
 {
     public partial class DiscoveryForm : Form
     {
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
+        private const int WM_NCLBUTTONDOWN = 0xA1;
+        private const int HT_CAPTION = 0x2;
 
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -33,6 +33,9 @@ namespace MultiPlug.Windows.Desktop
         private Point WindowStateNormalLocation;
 
         private System.Timers.Timer m_RefreshTimer = new System.Timers.Timer();
+
+        private string m_ClickedIP = string.Empty;
+        private LatestVersionLookup m_LatestVersionLookup;
 
         public DiscoveryForm()
         {
@@ -63,6 +66,8 @@ namespace MultiPlug.Windows.Desktop
             m_TrayIcon.Visible = true;
 
             DataGridModelBindingSource.Add(m_DataGridModel);
+
+            m_LatestVersionLookup = new LatestVersionLookup();
 
             m_DiscoveryService = new Service.Discovery();
             m_DiscoveryService.Resolved += OnDeviceDiscovered;
@@ -115,25 +120,23 @@ namespace MultiPlug.Windows.Desktop
             BeginInvoke((MethodInvoker)delegate
             {
                 m_DataGridModel.Devices.Add(e);
+
+                DataGridView.ClearSelection();
+
+                MenuItem MenuItem = new MenuItem();
+                MenuItem.Break = false;
+                MenuItem.Text = e.Name;
+                MenuItem.Tag = e.Url;
+                MenuItem.Click += OnDiscoveredMenuItem_Click;
+                MenuItem.Enabled = true;
+                m_DiscoveredMenuItem.MenuItems.Add(MenuItem);
             });
-
-            DataGridView.ClearSelection();
-
-            MenuItem MenuItem = new MenuItem();
-            MenuItem.Break = false;
-            MenuItem.Text = e.Name;
-            MenuItem.Tag = e.Url;
-            MenuItem.Click += OnDiscoveredMenuItem_Click;
-            MenuItem.Enabled = true;
-            m_DiscoveredMenuItem.MenuItems.Add(MenuItem);
         }
 
         private void Form_Load(object sender, EventArgs e)
         {
             this.MaximumSize = new Size(this.Size.Width, Screen.PrimaryScreen.WorkingArea.Height);
         }
-
-        private string m_ClickedIP = string.Empty;
 
         private void OnCellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -268,16 +271,30 @@ namespace MultiPlug.Windows.Desktop
             BeginInvoke((MethodInvoker)delegate
             {
                 m_DiscoveredMenuItem.MenuItems.Clear();
-            });
-
-            BeginInvoke((MethodInvoker)delegate
-            {
                 m_DataGridModel.Devices.Clear();
+
+                ShowInTaskbar = true;
+                m_DiscoveryService.Start();
+                m_RefreshTimer.Start();
             });
 
-            ShowInTaskbar = true;
-            m_DiscoveryService.Start();
-            m_RefreshTimer.Start();
+            if(m_LatestVersionLookup.ShouldDisplayUpdatePrompt())
+            {
+                string message = "Version " + m_LatestVersionLookup.LatestRelease.version + " is available to download. Open the download web page?";
+                string caption = "Upgrade Available";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+
+                // Displays the MessageBox.
+                result = MessageBox.Show(message, caption, buttons);
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    ProcessStartInfo sInfo = new ProcessStartInfo(m_LatestVersionLookup.LatestRelease.web);
+                    Process.Start(sInfo);
+                    // Closes the parent form.
+                    this.Close();
+                }
+            }
         }
 
         private void TopPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
