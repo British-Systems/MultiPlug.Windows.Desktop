@@ -1,6 +1,6 @@
 @echo OFF
 
-set INSTALLNAME=MultiPlug Windows Desktop 1.1.6
+set INSTALLNAME=MultiPlug Windows Desktop 1.1.7
 
 set MAKENSIS_PATH= NSIS\bin\MAKENSIS.EXE
 
